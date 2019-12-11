@@ -194,15 +194,15 @@ const handlers = {
             TableName: patientTable
         }
         console.log(params);
-        
+
         docClient.scan(params).promise().then(data => {
             console.log('patient succeeded', data);
             console.log(data.Items);
-            
+
             const welcomeSpeech = `Hi ${data.Items[data.Items.length].Name} . Contrary to many thinking that mental illness is so depressing and very diffcult to handle , we can rewire the thought process and continue to remain calm in the visititutes of life.  over the course i will be walking you through the myth and reality as well for you to better understand .`
             this.emit(':tell', welcomeSpeech);
         })
-       
+
     },
 
     'ProceedIntent'() {
@@ -239,25 +239,403 @@ const handlers = {
 
         if (!slots.Sleep.value) {
             const slotToElicit = 'Sleep'
-            const speechOutput = 'chal here we go.... Do you have any questions before we can start?'
-            const repromptSpeech = 'Please ask me any if u ask any question';
+            const speechOutput = 'Its been observed that most of the the stress and anixiety related issues are better dealt with proper sleep. Given the constaint how long do you sleep on  an average every single day?'
+            const repromptSpeech = 'Please tell me how long you will sleep?';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
         else if ((slots.Sleep.confirmationStatus !== 'CONFIRMED')) {
             if (slots.Sleep.confirmationStatus !== 'DENIED') {
                 // slot status: unconfirmed
                 const slotToConfirm = 'Sleep';
-                const speechOutput = `Have u answered correctly?`
+                const speechOutput = `Have u told your sleeping hours?`
                 const repromptSpeech = speechOutput;
                 return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
             }
 
             // slot status: denied -> reprompt for slot data
             const slotToElicit = 'Sleep';
-            const speechOutput = 'chal here we go.... Do you have any questions before we can start?'
-            const repromptSpeech = 'Please answer my question, then only i can judge you?';
+            const speechOutput = 'Its been observed that most of the the stress and anixiety related issues are better dealt with proper sleep. Given the constaint how long do you sleep on  an average every single day?'
+            const repromptSpeech = 'Please tell me how long you will sleep?';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
+
+        // sleep quality check.......
+        if (!slots.MentalScale.value) {
+            const slotToElicit = 'MentalScale'
+            const speechOutput = 'The sleep quality is a part of daily cleansing and a very important natural process. On a scale of 1 - 10 rate your sleep quality'
+            const repromptSpeech = 'Please tell me whether I can proceed or not?';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+        else if ((slots.MentalScale.confirmationStatus !== 'CONFIRMED')) {
+            if (slots.MentalScale.confirmationStatus !== 'DENIED') {
+                // slot status: unconfirmed
+                const slotToConfirm = 'MentalScale';
+                const speechOutput = `Have u accept to proceed further?`
+                const repromptSpeech = speechOutput;
+                return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
+            }
+
+            // slot status: denied -> reprompt for slot data
+            const slotToElicit = 'MentalScale';
+            const speechOutput = 'The sleep quality is a part of daily cleansing and a very important natural process. On a scale of 1 - 10 rate your sleep quality'
+            const repromptSpeech = 'Please tell me whether I can proceed or not?';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+
+        const params = {
+            TableName: patientTable
+        }
+        console.log(params);
+        let list_data;
+
+        docClient.scan(params).promise().then(data => {
+            console.log('patient succeeded in sleep mode', data);
+            console.log(data.Items);
+            list_data = data.Items;
+        })
+
+        var params1 = {
+            TableName: patientTable,
+            Key: {
+                "userId": list_data[list_data.length].userId
+            },
+            UpdateExpression: "set QuesAns = :ques, sleep = :num, scale = :str",
+            ExpressionAttributeValues: {
+                ":ques": slots.QuestionAnswer.value,
+                ":num": slots.Sleep.value,
+                ":str": slots.MentalScale.value
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
+        docClient.update(params1).promise().then(data => {
+            console.log("question and sleep hours and mental scale updated...", data);
+
+            const instructions = 'question and sleep hours and mental scale updated...';
+
+            this.emit(':tell', instructions);
+
+        }).catch(err => {
+
+            console.error(err);
+
+        })
+    },
+
+    'QuizIntent'() {
+
+        if (!slots.QuesOne.value) {
+            const slotToElicit = 'QuesOne'
+            const speechOutput = 'Sleep Timings results in proper melatonin secretion which is natural process for sleep being induced. What generally is your sleep timings?'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+        else if ((slots.QuesOne.confirmationStatus !== 'CONFIRMED')) {
+            if (slots.QuesOne.confirmationStatus !== 'DENIED') {
+                // slot status: unconfirmed
+                const slotToConfirm = 'QuesOne';
+                const speechOutput = `U had answered this ${slots.QuesOne.value}, correct?`
+                const repromptSpeech = speechOutput;
+                return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
+            }
+
+            // slot status: denied -> reprompt for slot data
+            const slotToElicit = 'QuesOne';
+            const speechOutput = 'Sleep Timings results in proper melatonin secretion which is natural process for sleep being induced. What generally is your sleep timings?'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+
+        if (!slots.QuesTwo.value) {
+            const slotToElicit = 'QuesTwo'
+            const speechOutput = 'The subconscious mind unlike the way it sounds it extremely conscious. (pause 4 seconds) Remember the act of hitting a mosquito while you are in deep sleep? (pause 3 seconds) Do you wake up become of frequent nightmares ? do you wake up dead tired because of dreams?'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+        else if ((slots.QuesTwo.confirmationStatus !== 'CONFIRMED')) {
+            if (slots.QuesTwo.confirmationStatus !== 'DENIED') {
+                // slot status: unconfirmed
+                const slotToConfirm = 'QuesTwo';
+                const speechOutput = `U had answered this ${slots.QuesTwo.value}, correct?`
+                const repromptSpeech = speechOutput;
+                return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
+            }
+
+            // slot status: denied -> reprompt for slot data
+            const slotToElicit = 'QuesTwo';
+            const speechOutput = 'The subconscious mind unlike the way it sounds it extremely conscious. (pause 4 seconds) Remember the act of hitting a mosquito while you are in deep sleep? (pause 3 seconds) Do you wake up become of frequent nightmares ? do you wake up dead tired because of dreams?'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+
+        if (!slots.QuesThree.value) {
+            const slotToElicit = 'QuesThree'
+            const speechOutput = 'Alcohol make knock you down but doesnt mean your sleep is great. is alcohol a part of your daily/weekly routine? Smoking or drugs results in abnormal sleep cycles . if either is part of you please do elaborate on them'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+        else if ((slots.QuesThree.confirmationStatus !== 'CONFIRMED')) {
+            if (slots.QuesThree.confirmationStatus !== 'DENIED') {
+                // slot status: unconfirmed
+                const slotToConfirm = 'QuesThree';
+                const speechOutput = `U had answered this ${slots.QuesThree.value}, correct?`
+                const repromptSpeech = speechOutput;
+                return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
+            }
+
+            // slot status: denied -> reprompt for slot data
+            const slotToElicit = 'QuesThree';
+            const speechOutput = 'Alcohol make knock you down but doesnt mean your sleep is great. is alcohol a part of your daily/weekly routine? Smoking or drugs results in abnormal sleep cycles . if either is part of you please do elaborate on them'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+
+        if (!slots.QuesFour.value) {
+            const slotToElicit = 'QuesFour'
+            const speechOutput = 'Tortoise live a very very long life thanks to their slow heart rate . Emotional outbreaks are at times the reasons for mood swings , which over time turns habitual. Can you quantify your happiness quotient?? on a scale of 1 - 10 1 being the lowest and 10 being the highest'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+        else if ((slots.QuesFour.confirmationStatus !== 'CONFIRMED')) {
+            if (slots.QuesFour.confirmationStatus !== 'DENIED') {
+                // slot status: unconfirmed
+                const slotToConfirm = 'QuesFour';
+                const speechOutput = `U had answered this ${slots.QuesFour.value}, correct?`
+                const repromptSpeech = speechOutput;
+                return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
+            }
+
+            // slot status: denied -> reprompt for slot data
+            const slotToElicit = 'QuesFour';
+            const speechOutput = 'Tortoise live a very very long life thanks to their slow heart rate . Emotional outbreaks are at times the reasons for mood swings , which over time turns habitual. Can you quantify your happiness quotient?? on a scale of 1 - 10 1 being the lowest and 10 being the highest'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+
+        if (!slots.QuesFive.value) {
+            const slotToElicit = 'QuesFive'
+            const speechOutput = 'AntiDepressants have a soothing effect on the body . Do you know the body has the natural way of producing Antidepressants??  How long do you work out every day ? could you elaborate??? it could as simple as walking for half an hour to intense physical workouts at gym.'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+        else if ((slots.QuesFive.confirmationStatus !== 'CONFIRMED')) {
+            if (slots.QuesFive.confirmationStatus !== 'DENIED') {
+                // slot status: unconfirmed
+                const slotToConfirm = 'QuesFive';
+                const speechOutput = `U had answered this ${slots.QuesFive.value}, correct?`
+                const repromptSpeech = speechOutput;
+                return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
+            }
+
+            // slot status: denied -> reprompt for slot data
+            const slotToElicit = 'QuesFive';
+            const speechOutput = 'AntiDepressants have a soothing effect on the body . Do you know the body has the natural way of producing Antidepressants??  How long do you work out every day ? could you elaborate??? it could as simple as walking for half an hour to intense physical workouts at gym.'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+
+        if (!slots.QuesSix.value) {
+            const slotToElicit = 'QuesSix'
+            const speechOutput = 'Gratitude and self content are what seperates us Humans from all the other Mammals living across in the world. How contented are you ? is there any long term or short term grudge that you are holding onto any person? or situation?'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+        else if ((slots.QuesSix.confirmationStatus !== 'CONFIRMED')) {
+            if (slots.QuesSix.confirmationStatus !== 'DENIED') {
+                // slot status: unconfirmed
+                const slotToConfirm = 'QuesSix';
+                const speechOutput = `U had answered this ${slots.QuesSix.value}, correct?`
+                const repromptSpeech = speechOutput;
+                return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
+            }
+
+            // slot status: denied -> reprompt for slot data
+            const slotToElicit = 'QuesSix';
+            const speechOutput = 'Gratitude and self content are what seperates us Humans from all the other Mammals living across in the world. How contented are you ? is there any long term or short term grudge that you are holding onto any person? or situation?'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+
+        if (!slots.QuesSeven.value) {
+            const slotToElicit = 'QuesSeven'
+            const speechOutput = 'Money is always something that causes greatest happiness as it the commodity that each and every single human being in the world are running after. This on the contrary leads to a lot of anxiety which is known to hinder happiness and in turn bring down all the negativities  associated. Do you hold any Anxiety with respect to money? job loss or financial repayments associated??'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+        else if ((slots.QuesSeven.confirmationStatus !== 'CONFIRMED')) {
+            if (slots.QuesSeven.confirmationStatus !== 'DENIED') {
+                // slot status: unconfirmed
+                const slotToConfirm = 'QuesSeven';
+                const speechOutput = `U had answered this ${slots.QuesSeven.value}, correct?`
+                const repromptSpeech = speechOutput;
+                return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
+            }
+
+            // slot status: denied -> reprompt for slot data
+            const slotToElicit = 'QuesSeven';
+            const speechOutput = 'Money is always something that causes greatest happiness as it the commodity that each and every single human being in the world are running after. This on the contrary leads to a lot of anxiety which is known to hinder happiness and in turn bring down all the negativities  associated. Do you hold any Anxiety with respect to money? job loss or financial repayments associated??'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+
+        if (!slots.QuesEight.value) {
+            const slotToElicit = 'QuesEight'
+            const speechOutput = 'Every Human in this modern world must have heard this hyped word Meditation(we gotto play with the sound synthesis to make this look interesting) Have you tried any such cognitive way to handle your mental status? if So what was meditation type you worked with and the for how long?'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+        else if ((slots.QuesEight.confirmationStatus !== 'CONFIRMED')) {
+            if (slots.QuesEight.confirmationStatus !== 'DENIED') {
+                // slot status: unconfirmed
+                const slotToConfirm = 'QuesEight';
+                const speechOutput = `U had answered this ${slots.QuesEight.value}, correct?`
+                const repromptSpeech = speechOutput;
+                return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
+            }
+
+            // slot status: denied -> reprompt for slot data
+            const slotToElicit = 'QuesEight';
+            const speechOutput = 'Every Human in this modern world must have heard this hyped word Meditation(we gotto play with the sound synthesis to make this look interesting) Have you tried any such cognitive way to handle your mental status? if So what was meditation type you worked with and the for how long?'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+
+        if (!slots.QuesNine.value) {
+            const slotToElicit = 'QuesNine'
+            const speechOutput = 'Genetic imprints are often see to be passed to the offsprings. Does you family have any known health issues? kindly Elaborate'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+        else if ((slots.QuesNine.confirmationStatus !== 'CONFIRMED')) {
+            if (slots.QuesNine.confirmationStatus !== 'DENIED') {
+                // slot status: unconfirmed
+                const slotToConfirm = 'QuesNine';
+                const speechOutput = `U had answered this ${slots.QuesNine.value}, correct?`
+                const repromptSpeech = speechOutput;
+                return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
+            }
+
+            // slot status: denied -> reprompt for slot data
+            const slotToElicit = 'QuesNine';
+            const speechOutput = 'Genetic imprints are often see to be passed to the offsprings. Does you family have any known health issues? kindly Elaborate'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+
+        if (!slots.QuesTen.value) {
+            const slotToElicit = 'QuesTen'
+            const speechOutput = 'Secrets have always caused the deep mind to work without pause . Do we  need to know anything? we promise it will continue to be with us for ever (a promising voice)'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+        else if ((slots.QuesTen.confirmationStatus !== 'CONFIRMED')) {
+            if (slots.QuesTen.confirmationStatus !== 'DENIED') {
+                // slot status: unconfirmed
+                const slotToConfirm = 'QuesTen';
+                const speechOutput = `U had answered this ${slots.QuesTen.value}, correct?`
+                const repromptSpeech = speechOutput;
+                return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
+            }
+
+            // slot status: denied -> reprompt for slot data
+            const slotToElicit = 'QuesTen';
+            const speechOutput = 'Secrets have always caused the deep mind to work without pause . Do we  need to know anything? we promise it will continue to be with us for ever (a promising voice)'
+            const repromptSpeech = 'Please tell me correct the answer according to the question';
+            return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
+        }
+
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
+
+        console.log(getRandomInt(10));
+
+        const params = {
+            TableName: patientTable
+        }
+        let list_data;
+
+        docClient.scan(params).promise().then(data => {
+            console.log('patient succeeded in sleep mode', data);
+            console.log(data.Items);
+            list_data = data.Items;
+        })
+
+        var params1 = {
+            TableName: patientTable,
+            Key: {
+                "userId": list_data[list_data.length].userId
+            },
+            UpdateExpression: "set One = :num1, Two = :num2, Three = :num3, Four = :num4, Five = :num5, Six = :num6, Seven = :num7, Eight = :num8, Nine = :num9, Ten = :num10",
+            ExpressionAttributeValues: {
+                ":num1": slots.QuesOne.value,
+                ":num2": slots.QuesTwo.value,
+                ":num3": slots.QuesThree.value,
+                ":num4": slots.QuesFour.value,
+                ":num5": slots.QuesFive.value,
+                ":num6": slots.QuesSix.value,
+                ":num7": slots.QuesSeven.value,
+                ":num8": slots.QuesEight.value,
+                ":num9": slots.QuesNine.value,
+                ":num10": slots.QuesTen.value
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
+        docClient.update(params1).promise().then(data => {
+            console.log("Quiz section Updated...", data);
+
+            let sum = slots.QuesOne.value + slots.QuesTwo.value + slots.QuesThree.value + slots.QuesFour.value + slots.QuesFive.value + slots.QuesSix.value + slots.QuesSeven.value + slots.QuesEight.value + slots.QuesNine.value + slots.QuesTen.value
+
+            const instructions;
+
+            switch (true) {
+                case sum <= 10:
+                    instructions = 'a';
+                    this.emit(':tell', instructions);
+                    break;
+                case sum <= 20:
+                    instructions = 'b';
+                    this.emit(':tell', instructions);
+                    break;
+                case sum <= 30:
+                    instructions = 'c';
+                    this.emit(':tell', instructions);
+                    break;
+                case sum <= 40:
+                    instructions = 'd';
+                    this.emit(':tell', instructions);
+                    break;
+                case sum <= 50:
+                    instructions = 'e';
+                    this.emit(':tell', instructions);
+                    break;
+                case sum <= 60:
+                    instructions = 'f';
+                    this.emit(':tell', instructions);
+                    break;
+                case sum <= 70:
+                    instructions = 'g';
+                    this.emit(':tell', instructions);
+                    break;
+                case sum <= 80:
+                    instructions = 'h';
+                    this.emit(':tell', instructions);
+                    break;
+                case sum <= 90:
+                    instructions = 'i';
+                    this.emit(':tell', instructions);
+                    break;
+                case sum <= 100:
+                    instructions = 'j';
+                    this.emit(':tell', instructions);
+                    break;
+                default:
+                    break;
+            }
+        }).catch(err => {
+
+            console.error(err);
+
+        })
     },
 
     'Unhandled'() {
