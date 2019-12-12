@@ -180,7 +180,7 @@ const handlers = {
             .then(data => {
                 console.log('Add patient succeded', data);
 
-                this.emit(':tell', `Patient ${name} added!`);
+                this.emit(':tell', `Patient ${name} added! Please say, ask neuro centre welcome`);
             })
             .catch(err => {
                 console.error(err);
@@ -198,8 +198,10 @@ const handlers = {
         docClient.scan(params).promise().then(data => {
             console.log('patient succeeded', data);
             console.log(data.Items);
+            console.log(data.Items.length)
+            let count = data.Items.length;
 
-            const welcomeSpeech = `Hi ${data.Items[data.Items.length].Name} . Contrary to many thinking that mental illness is so depressing and very diffcult to handle , we can rewire the thought process and continue to remain calm in the visititutes of life.  over the course i will be walking you through the myth and reality as well for you to better understand .`
+            const welcomeSpeech = `Hi ${data.Items[count-1].Name} . Contrary to many thinking that mental illness is so depressing and very diffcult to handle , we can rewire the thought process and continue to remain calm in the visititutes of life.  over the course i will be walking you through the myth and reality as well for you to better understand .`
             this.emit(':tell', welcomeSpeech);
         })
 
@@ -567,16 +569,16 @@ const handlers = {
             },
             UpdateExpression: "set One = :num1, Two = :num2, Three = :num3, Four = :num4, Five = :num5, Six = :num6, Seven = :num7, Eight = :num8, Nine = :num9, Ten = :num10",
             ExpressionAttributeValues: {
-                ":num1": slots.QuesOne.value,
-                ":num2": slots.QuesTwo.value,
-                ":num3": slots.QuesThree.value,
-                ":num4": slots.QuesFour.value,
-                ":num5": slots.QuesFive.value,
-                ":num6": slots.QuesSix.value,
-                ":num7": slots.QuesSeven.value,
-                ":num8": slots.QuesEight.value,
-                ":num9": slots.QuesNine.value,
-                ":num10": slots.QuesTen.value
+                ":num1": getRandomInt(10),
+                ":num2": getRandomInt(10),
+                ":num3": getRandomInt(10),
+                ":num4": getRandomInt(10),
+                ":num5": getRandomInt(10),
+                ":num6": getRandomInt(10),
+                ":num7": getRandomInt(10),
+                ":num8": getRandomInt(10),
+                ":num9": getRandomInt(10),
+                ":num10": getRandomInt(10)
             },
             ReturnValues: "UPDATED_NEW"
         };
@@ -585,7 +587,7 @@ const handlers = {
 
             let sum = slots.QuesOne.value + slots.QuesTwo.value + slots.QuesThree.value + slots.QuesFour.value + slots.QuesFive.value + slots.QuesSix.value + slots.QuesSeven.value + slots.QuesEight.value + slots.QuesNine.value + slots.QuesTen.value
 
-            const instructions;
+            let instructions;
 
             switch (true) {
                 case sum <= 10:
