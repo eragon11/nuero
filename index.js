@@ -201,7 +201,7 @@ const handlers = {
             console.log(data.Items.length)
             let count = data.Items.length;
 
-            const welcomeSpeech = `Hi ${data.Items[count-1].Name} . Contrary to many thinking that mental illness is so depressing and very diffcult to handle , we can rewire the thought process and continue to remain calm in the visititutes of life.  over the course i will be walking you through the myth and reality as well for you to better understand .`
+            const welcomeSpeech = `Hi ${data.Items[count-count].Name} . Contrary to many thinking that mental illness is so depressing and very diffcult to handle , we can rewire the thought process and continue to remain calm in the visititutes of life.  over the course i will be walking you through the myth and reality as well for you to better understand .`
             this.emit(':tell', welcomeSpeech);
         })
 
@@ -211,7 +211,7 @@ const handlers = {
         const proceedSpeech = 'Lets play a small game called whats in front of me.. ... For the next 1 min i want you to describe each and everything that you may see hear or feel.. like i see a black TV i see this man with a big moustache i see this and i see that.. Dont worry I will keep a tab of the time.'
         this.emit(':tell', proceedSpeech)
     },
-
+// ask neuro centre 
     'SkillIntent'() {
         const { slots } = this.event.request.intent;
         // prompt for slot values and request a confirmation for each
@@ -288,38 +288,38 @@ const handlers = {
             TableName: patientTable
         }
         console.log(params);
-        let list_data;
+       
 
         docClient.scan(params).promise().then(data => {
             console.log('patient succeeded in sleep mode', data);
             console.log(data.Items);
-            list_data = data.Items;
-        })
-
-        var params1 = {
-            TableName: patientTable,
-            Key: {
-                "userId": list_data[list_data.length].userId
-            },
-            UpdateExpression: "set QuesAns = :ques, sleep = :num, scale = :str",
-            ExpressionAttributeValues: {
-                ":ques": slots.QuestionAnswer.value,
-                ":num": slots.Sleep.value,
-                ":str": slots.MentalScale.value
-            },
-            ReturnValues: "UPDATED_NEW"
-        };
-        docClient.update(params1).promise().then(data => {
-            console.log("question and sleep hours and mental scale updated...", data);
-
-            const instructions = 'question and sleep hours and mental scale updated...';
-
-            this.emit(':tell', instructions);
-
-        }).catch(err => {
-
-            console.error(err);
-
+            let list_data = data.Items;
+            let count = list_data.length
+            var params1 = {
+                TableName: patientTable,
+                Key: {
+                    "userId": list_data[count-count].userId
+                },
+                UpdateExpression: "set QuesAns = :ques, sleep = :num, scale = :str",
+                ExpressionAttributeValues: {
+                    ":ques": slots.QuestionAnswer.value,
+                    ":num": slots.Sleep.value,
+                    ":str": slots.MentalScale.value
+                },
+                ReturnValues: "UPDATED_NEW"
+            };
+            docClient.update(params1).promise().then(data => {
+                console.log("question and sleep hours and mental scale updated...", data);
+    
+                const instructions = 'question and sleep hours and mental scale updated...';
+    
+                this.emit(':tell', instructions);
+    
+            }).catch(err => {
+    
+                console.error(err);
+    
+            })
         })
     },
 
