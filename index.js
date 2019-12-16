@@ -201,7 +201,7 @@ const handlers = {
             console.log(data.Items.length)
             let count = data.Items.length;
 
-            const welcomeSpeech = `Hi ${data.Items[count-count].Name} . Contrary to many thinking that mental illness is so depressing and very diffcult to handle , we can rewire the thought process and continue to remain calm in the visititutes of life.  over the course i will be walking you through the myth and reality as well for you to better understand .`
+            const welcomeSpeech = `Hi ${data.Items[count - count].Name} . Contrary to many thinking that mental illness is so depressing and very diffcult to handle , we can rewire the thought process and continue to remain calm in the visititutes of life.  over the course i will be walking you through the myth and reality as well for you to better understand .`
             this.emit(':tell', welcomeSpeech);
         })
 
@@ -211,7 +211,7 @@ const handlers = {
         const proceedSpeech = 'Lets play a small game called whats in front of me.. ... For the next 1 min i want you to describe each and everything that you may see hear or feel.. like i see a black TV i see this man with a big moustache i see this and i see that.. Dont worry I will keep a tab of the time.'
         this.emit(':tell', proceedSpeech)
     },
-// ask neuro centre 
+    // ask neuro centre 
     'SkillIntent'() {
         const { slots } = this.event.request.intent;
         // prompt for slot values and request a confirmation for each
@@ -288,17 +288,21 @@ const handlers = {
             TableName: patientTable
         }
         console.log(params);
-       
+
 
         docClient.scan(params).promise().then(data => {
             console.log('patient succeeded in sleep mode', data);
             console.log(data.Items);
             let list_data = data.Items;
             let count = list_data.length
+            console.log(list_data[count - count].Name);
+            const name = list_data[count - count].Name
+            const userId = list_data[count - count].UserId
             var params1 = {
                 TableName: patientTable,
                 Key: {
-                    "userId": list_data[count-count].userId
+                    Name: name,
+                    UserId: userId
                 },
                 UpdateExpression: "set QuesAns = :ques, sleep = :num, scale = :str",
                 ExpressionAttributeValues: {
@@ -310,20 +314,24 @@ const handlers = {
             };
             docClient.update(params1).promise().then(data => {
                 console.log("question and sleep hours and mental scale updated...", data);
-    
+
                 const instructions = 'question and sleep hours and mental scale updated...';
-    
+
                 this.emit(':tell', instructions);
-    
+
             }).catch(err => {
-    
+                console.log("while update document error occurred");
                 console.error(err);
-    
+
             })
+        }).catch(err => {
+            console.log("while scan document error occurred");
+            console.error(err);
         })
     },
 
     'QuizIntent'() {
+        const { slots } = this.event.request.intent;
 
         if (!slots.QuesOne.value) {
             const slotToElicit = 'QuesOne'
@@ -560,83 +568,84 @@ const handlers = {
             console.log('patient succeeded in sleep mode', data);
             console.log(data.Items);
             list_data = data.Items;
-        })
-
-        var params1 = {
-            TableName: patientTable,
-            Key: {
-                "userId": list_data[list_data.length].userId
-            },
-            UpdateExpression: "set One = :num1, Two = :num2, Three = :num3, Four = :num4, Five = :num5, Six = :num6, Seven = :num7, Eight = :num8, Nine = :num9, Ten = :num10",
-            ExpressionAttributeValues: {
-                ":num1": getRandomInt(10),
-                ":num2": getRandomInt(10),
-                ":num3": getRandomInt(10),
-                ":num4": getRandomInt(10),
-                ":num5": getRandomInt(10),
-                ":num6": getRandomInt(10),
-                ":num7": getRandomInt(10),
-                ":num8": getRandomInt(10),
-                ":num9": getRandomInt(10),
-                ":num10": getRandomInt(10)
-            },
-            ReturnValues: "UPDATED_NEW"
-        };
-        docClient.update(params1).promise().then(data => {
-            console.log("Quiz section Updated...", data);
-
-            let sum = slots.QuesOne.value + slots.QuesTwo.value + slots.QuesThree.value + slots.QuesFour.value + slots.QuesFive.value + slots.QuesSix.value + slots.QuesSeven.value + slots.QuesEight.value + slots.QuesNine.value + slots.QuesTen.value
-
-            let instructions;
-
-            switch (true) {
-                case sum <= 10:
-                    instructions = 'a';
-                    this.emit(':tell', instructions);
-                    break;
-                case sum <= 20:
-                    instructions = 'b';
-                    this.emit(':tell', instructions);
-                    break;
-                case sum <= 30:
-                    instructions = 'c';
-                    this.emit(':tell', instructions);
-                    break;
-                case sum <= 40:
-                    instructions = 'd';
-                    this.emit(':tell', instructions);
-                    break;
-                case sum <= 50:
-                    instructions = 'e';
-                    this.emit(':tell', instructions);
-                    break;
-                case sum <= 60:
-                    instructions = 'f';
-                    this.emit(':tell', instructions);
-                    break;
-                case sum <= 70:
-                    instructions = 'g';
-                    this.emit(':tell', instructions);
-                    break;
-                case sum <= 80:
-                    instructions = 'h';
-                    this.emit(':tell', instructions);
-                    break;
-                case sum <= 90:
-                    instructions = 'i';
-                    this.emit(':tell', instructions);
-                    break;
-                case sum <= 100:
-                    instructions = 'j';
-                    this.emit(':tell', instructions);
-                    break;
-                default:
-                    break;
-            }
-        }).catch(err => {
-
-            console.error(err);
-
+            const count = list_data.length;
+            const name  = list_data[count-count].Name;
+            const userId = list_data[count-count].UserId;
+            var params1 = {
+                TableName: patientTable,
+                Key: {
+                    Name: name,
+                    UserId: userId
+                },
+                UpdateExpression: "set One = :num1, Two = :num2, Three = :num3, Four = :num4, Five = :num5, Six = :num6, Seven = :num7, Eight = :num8, Nine = :num9, Ten = :num10",
+                ExpressionAttributeValues: {
+                    ":num1": getRandomInt(10),
+                    ":num2": getRandomInt(10),
+                    ":num3": getRandomInt(10),
+                    ":num4": getRandomInt(10),
+                    ":num5": getRandomInt(10),
+                    ":num6": getRandomInt(10),
+                    ":num7": getRandomInt(10),
+                    ":num8": getRandomInt(10),
+                    ":num9": getRandomInt(10),
+                    ":num10": getRandomInt(10)
+                },
+                ReturnValues: "UPDATED_NEW"
+            };
+            docClient.update(params1).promise().then(data => {
+                console.log("Quiz section Updated...", data);
+    
+                let sum = getRandomInt(100);
+    
+                let instructions;
+    
+                switch (true) {
+                    case sum <= 10:
+                        instructions = 'You have mental problem';
+                        this.emit(':tell', instructions);
+                        break;
+                    case sum <= 20:
+                        instructions = 'you have head to mental problem';
+                        this.emit(':tell', instructions);
+                        break;
+                    case sum <= 30:
+                        instructions = 'you are in third stage of mental problem';
+                        this.emit(':tell', instructions);
+                        break;
+                    case sum <= 40:
+                        instructions = 'you are in fourth stage of mental problem';
+                        this.emit(':tell', instructions);
+                        break;
+                    case sum <= 50:
+                        instructions = 'you have brain storm problem';
+                        this.emit(':tell', instructions);
+                        break;
+                    case sum <= 60:
+                        instructions = 'you had brain stroke problem';
+                        this.emit(':tell', instructions);
+                        break;
+                    case sum <= 70:
+                        instructions = 'you have brain cancer';
+                        this.emit(':tell', instructions);
+                        break;
+                    case sum <= 80:
+                        instructions = 'your retina going to die';
+                        this.emit(':tell', instructions);
+                        break;
+                    case sum <= 90:
+                        instructions = 'your left brain going to die';
+                        this.emit(':tell', instructions);
+                        break;
+                    case sum <= 100:
+                        instructions = 'your brain malfunctioned....';
+                        this.emit(':tell', instructions);
+                        break;
+                    default:
+                        break;
+                }
+            }).catch(err => {
+                console.error(err);
+            })
         })
     },
 
