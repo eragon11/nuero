@@ -335,7 +335,7 @@ const handlers = {
 
         if (!slots.QuesOne.value) {
             const slotToElicit = 'QuesOne'
-            const speechOutput = 'Sleep Timings results in proper melatonin secretion which is natural process for sleep being induced. What generally is your sleep timings?'
+            const speechOutput = 'Sleep Timings results in proper melatonin secretion which is natural process for sleep being induced. What generally is your sleep timings? Please say your answer in this format: My sleeping time is your hours'
             const repromptSpeech = 'Please tell me correct the answer according to the question';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
@@ -343,21 +343,21 @@ const handlers = {
             if (slots.QuesOne.confirmationStatus !== 'DENIED') {
                 // slot status: unconfirmed
                 const slotToConfirm = 'QuesOne';
-                const speechOutput = `U had answered this ${slots.QuesOne.value}, correct?`
+                const speechOutput = `U had answered this ${slots.QuesOne.value} hours, correct?`
                 const repromptSpeech = speechOutput;
                 return this.emit(':confirmSlot', slotToConfirm, speechOutput, repromptSpeech);
             }
 
             // slot status: denied -> reprompt for slot data
             const slotToElicit = 'QuesOne';
-            const speechOutput = 'Sleep Timings results in proper melatonin secretion which is natural process for sleep being induced. What generally is your sleep timings?'
+            const speechOutput = 'Sleep Timings results in proper melatonin secretion which is natural process for sleep being induced. What generally is your sleep timings? Please say your answer in this format: My sleeping time is your hours'
             const repromptSpeech = 'Please tell me correct the answer according to the question';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
 
         if (!slots.QuesTwo.value) {
             const slotToElicit = 'QuesTwo'
-            const speechOutput = 'The subconscious mind unlike the way it sounds it extremely conscious. (pause 4 seconds) Remember the act of hitting a mosquito while you are in deep sleep? (pause 3 seconds) Do you wake up become of frequent nightmares ? do you wake up dead tired because of dreams?'
+            const speechOutput = '<speak>The subconscious mind unlike the way it sounds it extremely conscious.<break time="4s"/> Remember the act of hitting a mosquito while you are in deep sleep? <break time="3s"/> Do you wake up become of frequent nightmares ? do you wake up dead tired because of dreams? Please say your answer in this format: yes or no, your answer.</speak>'
             const repromptSpeech = 'Please tell me correct the answer according to the question';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
@@ -379,7 +379,7 @@ const handlers = {
 
         if (!slots.QuesThree.value) {
             const slotToElicit = 'QuesThree'
-            const speechOutput = 'Alcohol make knock you down but doesnt mean your sleep is great. is alcohol a part of your daily/weekly routine? Smoking or drugs results in abnormal sleep cycles . if either is part of you please do elaborate on them'
+            const speechOutput = 'Alcohol make knock you down but doesnt mean your sleep is great. is alcohol a part of your daily/weekly routine? Smoking or drugs results in abnormal sleep cycles . if either is part of you please do elaborate on them. Please say your answer in this format: yes, i had your answer habit. Then only i can sleep'
             const repromptSpeech = 'Please tell me correct the answer according to the question';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
