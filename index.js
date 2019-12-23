@@ -423,7 +423,7 @@ const handlers = {
 
         if (!slots.QuesFive.value) {
             const slotToElicit = 'QuesFive'
-            const speechOutput = 'AntiDepressants have a soothing effect on the body . Do you know the body has the natural way of producing Antidepressants??  How long do you work out every day ? could you elaborate??? it could as simple as walking for half an hour to intense physical workouts at gym.'
+            const speechOutput = 'AntiDepressants have a soothing effect on the body . Do you know the body has the natural way of producing Antidepressants??  How long do you work out every day ? could you elaborate??? it could as simple as walking for half an hour to intense physical workouts at gym. please say, i will work out daily your answer hours'
             const repromptSpeech = 'Please tell me correct the answer according to the question';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
@@ -445,7 +445,7 @@ const handlers = {
 
         if (!slots.QuesSix.value) {
             const slotToElicit = 'QuesSix'
-            const speechOutput = 'Gratitude and self content are what seperates us Humans from all the other Mammals living across in the world. How contented are you ? is there any long term or short term grudge that you are holding onto any person? or situation?'
+            const speechOutput = 'Gratitude and self content are what seperates us Humans from all the other Mammals living across in the world. How contented are you ? is there any long term or short term grudge that you are holding onto any person? or situation? please say, yes or no'
             const repromptSpeech = 'Please tell me correct the answer according to the question';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
@@ -467,7 +467,7 @@ const handlers = {
 
         if (!slots.QuesSeven.value) {
             const slotToElicit = 'QuesSeven'
-            const speechOutput = 'Money is always something that causes greatest happiness as it the commodity that each and every single human being in the world are running after. This on the contrary leads to a lot of anxiety which is known to hinder happiness and in turn bring down all the negativities  associated. Do you hold any Anxiety with respect to money? job loss or financial repayments associated??'
+            const speechOutput = 'Money is always something that causes greatest happiness as it the commodity that each and every single human being in the world are running after. This on the contrary leads to a lot of anxiety which is known to hinder happiness and in turn bring down all the negativities  associated. Do you hold any Anxiety with respect to money? job loss or financial repayments associated?? please say, i have anxiety on your answer'
             const repromptSpeech = 'Please tell me correct the answer according to the question';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
@@ -489,7 +489,7 @@ const handlers = {
 
         if (!slots.QuesEight.value) {
             const slotToElicit = 'QuesEight'
-            const speechOutput = 'Every Human in this modern world must have heard this hyped word Meditation(we gotto play with the sound synthesis to make this look interesting) Have you tried any such cognitive way to handle your mental status? if So what was meditation type you worked with and the for how long?'
+            const speechOutput = 'Every Human in this modern world must have heard this hyped word Meditation(we gotto play with the sound synthesis to make this look interesting) Have you tried any such cognitive way to handle your mental status? if So what was meditation type you worked with and the for how long? please say, i had meditation habit for your answer month'
             const repromptSpeech = 'Please tell me correct the answer according to the question';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
@@ -511,7 +511,7 @@ const handlers = {
 
         if (!slots.QuesNine.value) {
             const slotToElicit = 'QuesNine'
-            const speechOutput = 'Genetic imprints are often see to be passed to the offsprings. Does you family have any known health issues? kindly Elaborate'
+            const speechOutput = 'Genetic imprints are often see to be passed to the offsprings. Does you family have any known health issues? kindly Elaborate. please say disease name like one word answer'
             const repromptSpeech = 'Please tell me correct the answer according to the question';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
