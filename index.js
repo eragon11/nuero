@@ -354,10 +354,13 @@ const handlers = {
             const repromptSpeech = 'Please tell me correct the answer according to the question';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
+        console.log("quesOne completed");
 
         if (!slots.QuesTwo.value) {
+            console.log("Waiting for QuesTwo");
+
             const slotToElicit = 'QuesTwo'
-            const speechOutput = '<speak>The subconscious mind unlike the way it sounds it extremely conscious.<break time="4s"/> Remember the act of hitting a mosquito while you are in deep sleep? <break time="3s"/> Do you wake up become of frequent nightmares ? do you wake up dead tired because of dreams? Please say your answer in this format: yes or no, your answer.</speak>'
+            const speechOutput = 'The subconscious mind unlike the way it sounds it extremely conscious.<break time="4s"/> Remember the act of hitting a mosquito while you are in deep sleep? <break time="3s"/> Do you wake up become of frequent nightmares ? do you wake up dead tired because of dreams? Please say your answer in this format: yes or no, your answer.'
             const repromptSpeech = 'Please tell me correct the answer according to the question';
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
@@ -569,8 +572,8 @@ const handlers = {
             console.log(data.Items);
             list_data = data.Items;
             const count = list_data.length;
-            const name  = list_data[count-count].Name;
-            const userId = list_data[count-count].UserId;
+            const name = list_data[count - count].Name;
+            const userId = list_data[count - count].UserId;
             var params1 = {
                 TableName: patientTable,
                 Key: {
@@ -594,11 +597,11 @@ const handlers = {
             };
             docClient.update(params1).promise().then(data => {
                 console.log("Quiz section Updated...", data);
-    
+
                 let sum = getRandomInt(100);
-    
+
                 let instructions;
-    
+
                 switch (true) {
                     case sum <= 10:
                         instructions = 'You have mental problem';

@@ -1,0 +1,27 @@
+User: Neuro Centre
+Alexa;
+--------------------------------
+User: May i Know therapy types
+{PatientName}
+{PatientNumber}
+Alexa;
+-------------------------------
+User: welcome
+Alexa;
+-------------------------------
+User: proceed
+Alexa;
+-------------------------------
+User: ask neuro centre question
+Alexa;
+User: say the answer in one word
+Alexa;
+User: say yes for confirmation
+Alexa: It will ask sleeping hours
+User: {8}hours
+Alexa: it will ask the rating
+User: say the answer in one word
+Alexa;
+--------------------------------
+User: let start
+Alexa;
