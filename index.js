@@ -15,6 +15,8 @@ const docClient = new awsSDK.DynamoDB.DocumentClient();
 // const dbDelete = promisify(docClient.delete, docClient);
 
 const instructions = `Welcome to Dr GauthamDas Neuro Centre , Where We train strenghten and rehabilitate  the mind body interaction.`;
+var global_name;
+var global_userId;
 
 const handlers = {
 
@@ -140,6 +142,8 @@ const handlers = {
 
 
         const name = slots.PatientName.value;
+        global_name = slots.PatientName.value;
+        global_userId = userId;
         const mobile_number = slots.PatientNumber.value;
         const sports = slots.Sports.value;
         const dynamoParams = {
@@ -191,19 +195,23 @@ const handlers = {
     'WelcomeIntent'() {
         console.log("welcome Intent trigered.....");
         const params = {
-            TableName: patientTable
+            TableName: patientTable,
+            ScanIndexForward: false,
+            Limit: 1
         }
         console.log(params);
 
-        docClient.scan(params).promise().then(data => {
-            console.log('patient succeeded', data);
-            console.log(data.Items);
-            console.log(data.Items.length)
-            let count = data.Items.length;
+        // docClient.query(params).promise().then(data => {
+        //     console.log('patient succeeded', data);
+        //     console.log(data.Item);
+        //     console.log(data.Item.length)
+        //     let count = data.Item.length;
 
-            const welcomeSpeech = `Hi ${data.Items[count - count].Name} . Contrary to many thinking that mental illness is so depressing and very diffcult to handle , we can rewire the thought process and continue to remain calm in the visititutes of life.  over the course i will be walking you through the myth and reality as well for you to better understand .`
+        //     const welcomeSpeech = `Hi ${data.Item[count - count].Name} . Contrary to many thinking that mental illness is so depressing and very diffcult to handle , we can rewire the thought process and continue to remain calm in the visititutes of life.  over the course i will be walking you through the myth and reality as well for you to better understand .`
+        //     this.emit(':tell', welcomeSpeech);
+        // })
+        const welcomeSpeech = `Hi ${global_name} . Contrary to many thinking that mental illness is so depressing and very diffcult to handle , we can rewire the thought process and continue to remain calm in the visititutes of life.  over the course i will be walking you through the myth and reality as well for you to better understand .`
             this.emit(':tell', welcomeSpeech);
-        })
 
     },
 
@@ -284,25 +292,11 @@ const handlers = {
             return this.emit(':elicitSlot', slotToElicit, speechOutput, repromptSpeech);
         }
 
-        const params = {
-            TableName: patientTable
-        }
-        console.log(params);
-
-
-        docClient.scan(params).promise().then(data => {
-            console.log('patient succeeded in sleep mode', data);
-            console.log(data.Items);
-            let list_data = data.Items;
-            let count = list_data.length
-            console.log(list_data[count - count].Name);
-            const name = list_data[count - count].Name
-            const userId = list_data[count - count].UserId
             var params1 = {
                 TableName: patientTable,
                 Key: {
-                    Name: name,
-                    UserId: userId
+                    Name: global_name,
+                    UserId: global_userId
                 },
                 UpdateExpression: "set QuesAns = :ques, sleep = :num, scale = :str",
                 ExpressionAttributeValues: {
@@ -322,12 +316,7 @@ const handlers = {
             }).catch(err => {
                 console.log("while update document error occurred");
                 console.error(err);
-
             })
-        }).catch(err => {
-            console.log("while scan document error occurred");
-            console.error(err);
-        })
     },
 
     'QuizIntent'() {

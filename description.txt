@@ -2,6 +2,9 @@ User: Neuro Centre
 Alexa;
 --------------------------------
 User: May i Know therapy types
+Alexa;
+User: ya sure
+Alexa;
 {PatientName}
 {PatientNumber}
 Alexa;
@@ -18,10 +21,11 @@ User: say the answer in one word
 Alexa;
 User: say yes for confirmation
 Alexa: It will ask sleeping hours
-User: {8}hours
+User: {8}hours without space
 Alexa: it will ask the rating
 User: say the answer in one word
 Alexa;
 --------------------------------
-User: let start
+User: ask neuro centre let start
 Alexa;
+
