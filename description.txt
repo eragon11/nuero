@@ -9,10 +9,10 @@ Alexa;
 {PatientNumber}
 Alexa;
 -------------------------------
-User: welcome
+User: ask neuro centre welcome
 Alexa;
 -------------------------------
-User: proceed
+User: ask neuro centre proceed
 Alexa;
 -------------------------------
 User: ask neuro centre question
